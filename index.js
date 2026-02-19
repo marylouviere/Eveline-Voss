@@ -5,11 +5,11 @@ const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.MessageContent
   ],
 });
 
-// 🕯️ Blacklisted Words / Phrases
+// ✧ Blacklisted words
 const blacklist = [
   "nigger",
   "faggot",
@@ -28,34 +28,33 @@ const blacklist = [
 ];
 
 client.once("ready", () => {
-  console.log(`Eveline Voss is watching...`);
+  console.log(`Logged in as ${client.user.tag}`);
 });
 
-// 🌹 Blacklist Detection
+// ✧ Blacklist detection
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
 
   const content = message.content.toLowerCase();
-
   const found = blacklist.find(word => content.includes(word));
 
-  if (found) {
-    try {
-      await message.delete();
-    } catch (err) {
-      console.log("Couldn't delete message:", err);
-    }
+  if (!found) return;
 
-    const responses = [
-      `Oh, my dear ${message.author.username}… such language is not tolerated here.`,
-      `Very naughty of you, ${message.author.username}. Mind your tongue.`,
-      `Ah— ah. We follow the rules in this village, ${message.author.username}.`, 
-    ];
-
-    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-
-    message.channel.send(randomResponse);
+  try {
+    await message.delete();
+  } catch (err) {
+    console.log("Couldn't delete message.");
   }
+
+  const responses = [
+    `Oh, my dear ${message.author.username}! Let's not use that language x`,
+    `Very naughty of you ${message.author.username}!`,
+    `Ah! Let's follow the rules ${message.author.username}`
+  ];
+
+  const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+
+  message.channel.send(randomResponse);
 });
 
 client.login(process.env.TOKEN);
