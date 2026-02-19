@@ -9,22 +9,19 @@ const client = new Client({
   ],
 });
 
-// ✧ Blacklisted words (all lowercase)
+// ✧ Updated blacklist (swears, racist, homophobic, ableist, harmful phrases)
 const blacklist = [
-  "nigger",
-  "faggot",
-  "kill yourself",
-  "dyke",
-  "tranny",
-  "klu klux klan",
-  "coon",
-  "blackie",
-  "retard",
-  "fuck",
-  "shit",
-  "bitch",
-  "skank",
-  "whore"
+  // Swears
+  "fuck","shit","bitch","bastard","damn","ass","asshole","dick","piss","cock","cunt","fag","faggot",
+  "whore","slut","skank","prick","bollocks","twat","nigga","nigger","motherfucker","arse","wanker",
+  // Homophobic/racist terms
+  "dyke","tranny","coon","blackie","chink","gook","kike","spic","wetback","raghead","sandnigger",
+  "klu klux klan","faggy","dykey",
+  // Ableist / offensive
+  "retard","moron","lamebrain","cripple","imbecile","mong",
+  // Harmful phrases
+  "kill yourself","die","go die","suicide"
+  // Add more if needed
 ];
 
 // ✧ Bot ready
@@ -34,20 +31,20 @@ client.once("ready", () => {
 
 // ✧ Auto-moderation
 client.on("messageCreate", async (message) => {
-  if (message.author.bot) return; // Ignore other bots
+  if (message.author.bot) return; // Ignore bots
 
   const content = message.content.toLowerCase();
   const found = blacklist.find(word => content.includes(word));
-  if (!found) return; // No bad word found
+  if (!found) return;
 
-  // Try to delete the offending message
+  // Delete offending message
   try {
     await message.delete();
   } catch (err) {
     console.log("Couldn't delete message:", err);
   }
 
-  // Random warning messages, now pinging the user
+  // Randomized warnings, pinging user
   const responses = [
     `Oh, my dear <@${message.author.id}>! Let's not use that language x`,
     `Very naughty of you <@${message.author.id}>!`,
@@ -56,9 +53,7 @@ client.on("messageCreate", async (message) => {
 
   const randomResponse = responses[Math.floor(Math.random() * responses.length)];
 
-  // Send the warning
   message.channel.send({ content: randomResponse });
 });
 
-// ✧ Log in using token from .env
 client.login(process.env.TOKEN);
